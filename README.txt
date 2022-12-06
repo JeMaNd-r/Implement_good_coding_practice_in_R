@@ -13,6 +13,12 @@ Romy Zeiss
 romy.zeiss@idiv.de
 
 
+## Updates
+
+Updates will be available here: 
+https://github.com/JeMaNd-r/Implement_good_coding_practice_in_R
+
+
 ## Files
 
 2022-11-08_Principles-of-software-development_Daniel-Vedder.pdf
