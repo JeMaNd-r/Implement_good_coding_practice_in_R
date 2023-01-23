@@ -1,0 +1,64 @@
+## How to improve the bad coding example
+# Collection of ideas, 2022-12-06, iCode
+
+- unnecessary packages (psych, ggplot2)
+- non-explanatory variable names
+- RMarkdown file
+- redundancy (try for loop, function, purrr::map function [better than lapply])
+- assign plots to variables
+- indent lines creating the plots, e.g. shortcut CRTL + i
+- plot statement in linear model building
+- saving the plots is missing (ggsave, RMarkdown for full code & output)
+- fitting lm and plotting smooth (loess function)
+- categorical variables should be mapped as boxplots
+- here package or default path saved as variable to set working directory; avoid having full paths in your script
+- bad comments, more descriptive on what happens, not describing the code
+- no checks for bad input (necessary if code will run on many data, not if only own data)
+- ancapsulation: e.g. create function for linear model and one for plotting to create chunks that we can individually focus on
+- information about the script: what is it for, author, date, title
+
+
+Good things:
++ no rm(list=ls()) in the script: not removing all variables from environment; no reset of options and only removing objects, and annoying for people that want to help you; better: start new session
+
+Hints:
+- exploratory vs. code for publishing: setwd() fine for own scripts but if you want to publish, make sure others can use your code
+- CTR + SHIFT + F10 to start new session 
+- Ludmilla: "about effectively documenting code, we could do a hands on section applying what this paper suggests: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.13961  (sorry if someone posted about this before)"
+
+
+
+Example for using map from Ludmilla: 
+
+plots_list <- c("mpg", "disp",  "hp", "vs", "gear") %>% purrr::map(~ ggplot(data = cars, aes(x = "cyl", y = .x)) + geom_point()) 
+The ".x" in ggplot maps the elements of the vector to the y variable and returns a list,
+plot_list, whose elements are the plots: plots_list[[1]] has the plot for mpg ~ cyl, plots_list[[2]] has the plot for disp ~ cyl, and so on.
+It is also possible to name the elements of the list after the elements of the vector, so plot_list[["mpg"]] would hold the mpg ~ cyl plot, but I don't remember how to do it from the tp of my head.
+
+
+
+Example for using map from Guillaume:
+
+response_variables <- c("mpg", "disp", "hp", "vs", "gear")
+
+run_analysis <- function(yvar) {
+  
+  mod <- lm(as.formula(paste0(yvar, " ~ cyl")), data = mtcars)
+  p <- ggplot(data=mtcars, aes(cyl, y = .data[[yvar]]))+
+    geom_point()+geom_smooth()
+  
+  list(mod, p)
+  
+}
+
+res <- map(response_variables, run_analysis)
+
+plots <- map(res, 2)
+
+# library(cowplot)
+cowplot::plot_grid(plotlist = plots)
+
+ggsave("figure1.png")
+
+
+
